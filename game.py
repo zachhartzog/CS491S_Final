@@ -1,4 +1,4 @@
-import pandas as pd     # To handle data
+from pandas import Series, DataFrame # To handle data
 import numpy as np      # For number computing
 
 from IPython.display import display
@@ -9,54 +9,64 @@ import nltk
 nltk.download('punkt')
 nltk.download('vader_lexicon')
 
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+#from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import vaderSentiment as vader
 
-# We import our access keys:
-from credentials import *    # This will allow us to use the keys as variables
+datas = []
+tweet = []
+vs_compound = []
+vs_pos = []
+vs_neu = []
+vs_neg = []
+fav = []
+rt = []
+sscore = []
 
-with open('2015_lsu_alabama.csv') as myFile:
-    reader = csv.reader(myFile)
-    data = pd.DataFrame(data=[row[0] for row in reader], columns=['Tweets'])
+with open('1002.tsv') as myFile:
+    reader = csv.reader(myFile, delimiter='\t')
+    for row in reader:
+        datas.append([row[0],row[1],row[2]])
 
-display(data.head(20))
+data = DataFrame(datas, columns=['Tweets', 'Retweets','Favorites'])
 
-print "Getting Analysis..."
+display(data.head())
+
+analyzer = vader.SentimentIntensityAnalyzer()
+
+for i in range(0, len(data)):
+    tweet.append(data['Tweets'][i])
+    vs_compound.append(analyzer.polarity_scores(data['Tweets'][i])['compound'])
+    vs_pos.append(analyzer.polarity_scores(data['Tweets'][i])['pos'])
+    vs_neu.append(analyzer.polarity_scores(data['Tweets'][i])['neu'])
+    vs_neg.append(analyzer.polarity_scores(data['Tweets'][i])['neg'])
+    if vs_pos[i] > vs_neg[i]:
+        sscore.append(vs_pos[i])
+    if vs_pos[i] < vs_neg[i]:
+        sscore.append(vs_neg[i]*(-1.0))
+    if vs_pos[i] == vs_neg[i]:
+        sscore.append(0.0)
+
+
+data['Positive'] = np.array(vs_pos)
+data['Negative'] = np.array(vs_neg)
+data['Neutral'] = np.array(vs_neu)
+data['Compound'] = np.array(vs_compound)
+data['Sentiment Score'] = np.array(sscore)
+
+'''
 sid = SentimentIntensityAnalyzer()
 for tweet in data['Tweets']:
-   print(tweet)
-
-test_data = "Manchurian was hot and spicy"
-test_data_features = {word.lower(): (word in word_tokenize(test_data.lower())) for word in dictionary}
-
-print (classifier.classify(test_data_features))
-
+    print tweet
+    print sid.polarity_scores(tweet)
 
 data['NLTK'] = np.array([ max(sid.polarity_scores(tweet), key=lambda x: x[1]) for tweet in data['Tweets'] ])
 
-display(data.head(30))
-'''
-with open('2015_lsu_alabamaDATUM.csv', 'w') as csvfile:
-    fieldnames = ['text', 'analysis']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    i = 0
-    for tweet in data['Tweets']:
-        print i + "\t" + tweet + "\n"
-        writer.writerow({'text': tweet, 'analysis': datum_box.twitter_sentiment_analysis(tweet).encode('utf-8')})
-        i++
-'''
-#for i in range(30):
-    #print datum_box.twitter_sentiment_analysis(data['Tweets'][i]).encode('utf-8')
-#data['DATUM'] = np.array([ datum_box.twitter_sentiment_analysis(tweet).encode('utf-8') for tweet in data['Tweets'] ])
-
-# We display the updated dataframe with the new column:
-display(data.head(30))
 
 pos_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['NLTK'][index] == 'pos']
 neu_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['NLTK'][index] == 'neu']
 neg_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['NLTK'][index] == 'neg']
-
-# We print percentages:
-print("Percentage of positive tweets: {}%".format(len(pos_tweets)*100/len(data['Tweets'])))
-print("Percentage of neutral tweets: {}%".format(len(neu_tweets)*100/len(data['Tweets'])))
-print("Percentage de negative tweets: {}%".format(len(neg_tweets)*100/len(data['Tweets'])))
+print pos_tweets
+print neg_tweets
+print neu_tweets
+'''
+display(data.head(30))
