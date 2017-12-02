@@ -1,5 +1,3 @@
-# General:
-#import tweepy           # To consume Twitter's API
 import pandas as pd     # To handle data
 import numpy as np      # For number computing
 
@@ -15,39 +13,6 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 # We import our access keys:
 from credentials import *    # This will allow us to use the keys as variables
-
-'''
-# API's setup:
-def twitter_setup():
-    """
-    Utility function to setup the Twitter's API
-    with our access keys provided.
-    """
-    # Authentication and access using keys:
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_key, access_secret)
-
-    # Return API with authentication:
-    api = tweepy.API(auth)
-    return api
-'''
-#CHANGE THIS
-#=================================================================
-# We create an extractor object:
-'''
-extractor = twitter_setup()
-
-# We create a tweet list as follows:
-tweets = extractor.search(q="Alabama Football", lang="en", count=20)
-print("Number of tweets extracted: {}.\n".format(len(tweets)))
-
-# We print the most recent 5 tweets:
-print("recent tweets:\n")
-for tweet in tweets:
-    print(tweet.text)
-    print()
-'''
-#=================================================================
 
 with open('2015_lsu_alabama.csv') as myFile:
     reader = csv.reader(myFile)
