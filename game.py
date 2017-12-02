@@ -5,10 +5,6 @@ from IPython.display import display
 import re
 import csv
 
-import nltk
-nltk.download('punkt')
-nltk.download('vader_lexicon')
-
 #from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import vaderSentiment as vader
 
@@ -22,10 +18,10 @@ fav = []
 rt = []
 sscore = []
 
-with open('1002.tsv') as myFile:
+with open('Data/1002.tsv') as myFile:
     reader = csv.reader(myFile, delimiter='\t')
     for row in reader:
-        datas.append([row[0],row[1],row[2]])
+        if row: datas.append([row[0],row[1],row[2]])
 
 data = DataFrame(datas, columns=['Tweets', 'Retweets','Favorites'])
 
