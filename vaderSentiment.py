@@ -206,8 +206,6 @@ class SentimentIntensityAnalyzer(object):
         lex_dict = {}
         i=0
         for line in self.lexicon_full_filepath.split('\n'):
-            print i
-            print line.strip().split('\t')[0:2]
             if line:
                 (word, measure) = line.strip().split('\t')[0:2]
                 lex_dict[word] = float(measure)
@@ -468,6 +466,7 @@ if __name__ == '__main__':
 
     analyzer = SentimentIntensityAnalyzer()
 
+    
     print("----------------------------------------------------")
     print(" - Analyze typical example cases, including handling of:")
     print("  -- negations")
